@@ -11,6 +11,18 @@
              VerticalAlignment="Center"
              HorizontalContentAlignment="Center"
              VerticalContentAlignment="Center">
+    <UserControl.Resources>
+        <!-- 「悬停保持原色」用的动态画刷，运行时由 HoverControlBase 按 Call 按钮原色写入 -->
+        <SolidColorBrush x:Key="ClasscallerKeepHoverBrush" Color="#00000000"/>
+    </UserControl.Resources>
+    <UserControl.Styles>
+        <Style Selector="Button.keep-hover-color:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ClasscallerKeepHoverBrush}"/>
+        </Style>
+        <Style Selector="Button.keep-hover-color:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ClasscallerKeepHoverBrush}"/>
+        </Style>
+    </UserControl.Styles>
     <Grid x:Name="DragSurfacePanel"
           HorizontalAlignment="Center"
           VerticalAlignment="Center"

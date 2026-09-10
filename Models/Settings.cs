@@ -90,6 +90,7 @@ namespace Classcaller.Models
             IsC_AppearanceKey?.SetValue("ResultFontSize", Instance.Appearance.ResultFontSize);
             IsC_AppearanceKey?.SetValue("ResultBackground", Instance.Appearance.ResultBackground);
             IsC_AppearanceKey?.SetValue("CornerRadius", Instance.Appearance.CornerRadius);
+            IsC_AppearanceKey?.SetValue("KeepHoverColor", Instance.Appearance.KeepHoverColor);
             IsC_TopmostKey?.SetValue("Enabled", Instance.Topmost.Enabled);
             IsC_TopmostKey?.SetValue("IntervalMs", Instance.Topmost.IntervalMs);
             IsC_TopmostKey?.SetValue("EnableTopmostStyle", Instance.Topmost.EnableTopmostStyle);
@@ -194,6 +195,8 @@ namespace Classcaller.Models
                 Instance.Appearance.ResultBackground = IsC_AppearanceKey?.GetValue("ResultBackground") as string ?? string.Empty;
                 Instance.Appearance.CornerRadius = Convert.ToDouble(
                     IsC_AppearanceKey?.GetValue("CornerRadius") ?? AppearanceSetting.DefaultCornerRadius);
+                Instance.Appearance.KeepHoverColor = Convert.ToBoolean(
+                    IsC_AppearanceKey?.GetValue("KeepHoverColor") ?? false);
                 Instance.Topmost.Enabled = Convert.ToBoolean(IsC_TopmostKey?.GetValue("Enabled") ?? true);
                 Instance.Topmost.IntervalMs = Convert.ToInt32(IsC_TopmostKey?.GetValue("IntervalMs") ?? 250);
                 Instance.Topmost.EnableTopmostStyle = Convert.ToBoolean(IsC_TopmostKey?.GetValue("EnableTopmostStyle") ?? true);
@@ -268,6 +271,7 @@ namespace Classcaller.Models
             IsC_AppearanceKey?.SetValue("ResultFontSize", Instance.Appearance.ResultFontSize);
             IsC_AppearanceKey?.SetValue("ResultBackground", Instance.Appearance.ResultBackground);
             IsC_AppearanceKey?.SetValue("CornerRadius", Instance.Appearance.CornerRadius);
+            IsC_AppearanceKey?.SetValue("KeepHoverColor", Instance.Appearance.KeepHoverColor);
             IsC_TopmostKey?.SetValue("Enabled", Instance.Topmost.Enabled);
             IsC_TopmostKey?.SetValue("IntervalMs", Instance.Topmost.IntervalMs);
             IsC_TopmostKey?.SetValue("EnableTopmostStyle", Instance.Topmost.EnableTopmostStyle);

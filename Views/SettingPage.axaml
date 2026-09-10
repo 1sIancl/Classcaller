@@ -345,6 +345,14 @@
                             </StackPanel>
                         </fa:FASettingsExpander.Footer>
                     </fa:FASettingsExpander>
+                    <fa:FASettingsExpander
+                    IconSource="{ci:FluentIconSource &#xE790;}"
+                    Header="悬停保持原色"
+                    Description="开启后，光标移到或按住悬浮窗「Call」按钮时保持其原本背景色，不做高亮或变透明">
+                        <fa:FASettingsExpander.Footer>
+                            <ToggleSwitch IsChecked="{Binding KeepHoverColorDraft, Mode=TwoWay}"/>
+                        </fa:FASettingsExpander.Footer>
+                    </fa:FASettingsExpander>
                     <Button HorizontalAlignment="Right" Margin="0,8,0,0" Classes="accent"
                             Click="SaveAppearanceButton_OnClick">
                         <ci:IconText Glyph="&#xE74E;" Text="保存修改"/>

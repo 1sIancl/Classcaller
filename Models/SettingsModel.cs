@@ -487,6 +487,18 @@ namespace Classcaller.Models
             }
         }
 
+        private bool _keepHoverColor;
+
+        /// <summary>
+        /// 是否让悬浮窗「Call」按钮在光标悬停/按下时保持原本背景色。
+        /// 关闭时沿用 ClassIsland / FluentAvalonia 的 :pointerover、:pressed 高亮效果。
+        /// </summary>
+        public bool KeepHoverColor
+        {
+            get => _keepHoverColor;
+            set { if (_keepHoverColor != value) { _keepHoverColor = value; OnPropertyChanged(nameof(KeepHoverColor)); } }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

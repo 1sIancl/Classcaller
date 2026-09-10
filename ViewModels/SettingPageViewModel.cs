@@ -256,6 +256,14 @@ public class SettingPageViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _cornerRadiusDraft, value);
     }
 
+    // 悬停保持原色（草稿：编辑后点「保存修改」才生效）
+    private bool _keepHoverColorDraft;
+    public bool KeepHoverColorDraft
+    {
+        get => _keepHoverColorDraft;
+        set => this.RaiseAndSetIfChanged(ref _keepHoverColorDraft, value);
+    }
+
     // ===== 快捷键点名（草稿：点「保存快捷键」才生效）=====
     private bool _hotkeyEnabledDraft;
     public bool HotkeyEnabledDraft
@@ -628,6 +636,7 @@ public class SettingPageViewModel : ReactiveObject
         FontFamilyDraft = a.FontFamily;
         ResultFontSizeDraft = a.ResultFontSize;
         CornerRadiusDraft = a.CornerRadius;
+        KeepHoverColorDraft = a.KeepHoverColor;
     }
 
     /// <summary>把外观草稿提交到设置并持久化（点「保存修改」时调用）。</summary>
@@ -643,6 +652,7 @@ public class SettingPageViewModel : ReactiveObject
         a.FontFamily = FontFamilyDraft ?? string.Empty;
         a.ResultFontSize = ResultFontSizeDraft > 0 ? ResultFontSizeDraft : 60;
         a.CornerRadius = CornerRadiusDraft < 0 ? 0 : CornerRadiusDraft;
+        a.KeepHoverColor = KeepHoverColorDraft;
     }
 
     /// <summary>从已保存设置加载快捷键草稿。</summary>
