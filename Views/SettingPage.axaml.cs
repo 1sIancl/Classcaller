@@ -517,6 +517,57 @@ public partial class SettingPage : SettingsPageBase
         _ = ShowCenteredInfoAsync("已保存", "外观修改已生效。", this);
     }
 
+    private void SaveHotkeyButton_OnClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (!vm.ValidateHotkeyDraft(out var error))
+        {
+            _ = ShowCenteredInfoAsync("快捷键无效", error, this);
+            return;
+        }
+
+        vm.SaveHotkey();
+        var hotkeyService = IAppHost.TryGetService<HotkeyService>();
+        if (hotkeyService is null)
+        {
+            logger.LogWarning("快捷键服务未注册，快捷键设置已保存但本次未注册。");
+            vm.RefreshHotkeyStatus(HotkeyRegistrationState.Disabled, "服务未就绪");
+            _ = ShowCenteredInfoAsync("已保存", "快捷键设置已保存，但快捷键服务未就绪，重启后生效。", this);
+            return;
+        }
+
+        hotkeyService.Apply(silent: true);
+        vm.RefreshHotkeyStatus(hotkeyService.State, hotkeyService.StateMessage);
+        logger.LogInformation(
+            "快捷键设置已保存：{State} - {Message}", hotkeyService.State, hotkeyService.StateMessage);
+
+        var hotkey = Settings.Instance.Hotkey;
+        if (!hotkey.Enabled)
+        {
+            _ = ShowCenteredInfoAsync("已保存", "已关闭快捷键点名。", this);
+            return;
+        }
+
+        string scopeText = hotkey.Scope == HotkeyScope.ClassIslandForeground ? "仅 ClassIsland 前台" : "全局";
+        switch (hotkeyService.State)
+        {
+            case HotkeyRegistrationState.Registered:
+                _ = ShowCenteredInfoAsync("已保存", $"{hotkey.GestureText} 已生效（触发范围：{scopeText}）。", this);
+                break;
+            case HotkeyRegistrationState.Conflict:
+                _ = ShowCenteredInfoAsync(
+                    "快捷键冲突",
+                    $"{hotkey.GestureText} 已被其它程序占用，请更换组合后重试。",
+                    this);
+                break;
+            case HotkeyRegistrationState.Invalid:
+                _ = ShowCenteredInfoAsync("快捷键无效", hotkeyService.StateMessage, this);
+                break;
+            default:
+                _ = ShowCenteredInfoAsync("注册失败", $"快捷键注册失败：{hotkeyService.StateMessage}", this);
+                break;
+        }
+    }
+
     private static async Task ShowCenteredInfoAsync(string header, string content, Visual xamlRoot)
     {
         var dialog = new FATaskDialog

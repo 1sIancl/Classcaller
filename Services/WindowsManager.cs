@@ -119,9 +119,22 @@ internal class WindowsManager
             {
                 liquidShower.SetDisplayContent(showPanel);
             }
+            else if (showerWindow.Content is Border fluentHost)
+            {
+                // 复用 Fluent 展示窗口时，仅替换内部内容，保留外层圆角 Border。
+                fluentHost.Child = showPanel;
+            }
             else
             {
-                showerWindow.Content = showPanel;
+                // Fluent 展示窗口内容包一层圆角 Border，让「结果背景色」与「界面圆角」生效。
+                showerWindow.Content = new Border
+                {
+                    HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
+                    VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch,
+                    Child = showPanel
+                };
+                showerWindow.HorizontalContentAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
+                showerWindow.VerticalContentAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
             }
 
             showPanel.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
@@ -138,7 +151,7 @@ internal class WindowsManager
 
                 if (showerWindow is LiquidShower liquidGlassWindow)
                 {
-                    liquidGlassWindow.ApplyGlassExtent(height);
+                    liquidGlassWindow.ApplyGlassExtent(height, appearance.CornerRadius);
                 }
 
                 var widthPixels = Math.Max(1, (int)Math.Ceiling(width * scaling));
@@ -196,11 +209,14 @@ internal class WindowsManager
                     nameText.Foreground = foreground;
                 }
 
-                // 自定义结果窗口背景色
+                // 自定义结果窗口背景色 + 界面圆角（作用于外层圆角 Border）
                 var background = ParseBrush(appearance.ResultBackground);
-                if (background is not null)
+                if (showerWindow.Content is Border host)
                 {
-                    showerWindow.Background = background;
+                    host.Background = background;
+                    var windowHeight = double.IsFinite(showerWindow.Height) ? showerWindow.Height : 110;
+                    host.CornerRadius = new CornerRadius(
+                        Math.Min(Math.Max(0, appearance.CornerRadius), windowHeight / 2));
                 }
             }
             else

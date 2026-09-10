@@ -32,22 +32,23 @@ public partial class HoverLiquidControl : HoverControlBase
         var scalingFactor = GetScalingFactor();
 
         GlassContainer.IsVisible = !_isMiniLayout;
-        GlassContainer.CornerRadius = BaseContainerCornerRadius * scalingFactor;
+        // 界面圆角：玻璃容器半径跟随配置，收敛到容器半高（35）后随缩放因子放大。
+        GlassContainer.CornerRadius = ClampCornerRadius(BaseContainerCornerRadius) * scalingFactor;
         MiniButton.IsVisible = _isMiniLayout;
         MiniButton.Width = BaseMiniButtonSize * scalingFactor;
         MiniButton.Height = BaseMiniButtonSize * scalingFactor;
-        MiniButton.CornerRadius = BaseMiniButtonCornerRadius * scalingFactor;
+        MiniButton.CornerRadius = ClampCornerRadius(BaseMiniButtonCornerRadius) * scalingFactor;
         MiniButton.Margin = new Thickness(BaseMiniButtonMargin * scalingFactor);
         MiniIcon.Width = BaseMiniIconSize * scalingFactor;
         MiniIcon.Height = BaseMiniIconSize * scalingFactor;
         CallTextBlock.IsVisible = isFullLayout;
         Button1.Width = isFullLayout ? 88 : 56;
         Button1.Height = 56;
-        Button1.CornerRadius = new CornerRadius(28);
+        Button1.CornerRadius = new CornerRadius(ClampCornerRadius(28));
         Button2.IsVisible = !_isMiniLayout;
         Button2.Width = 56;
         Button2.Height = 56;
-        Button2.CornerRadius = new CornerRadius(28);
+        Button2.CornerRadius = new CornerRadius(ClampCornerRadius(28));
     }
 
     private static double GetScalingFactor()

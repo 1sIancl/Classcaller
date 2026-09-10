@@ -11,7 +11,6 @@ namespace Classcaller.Views;
 public partial class LiquidShower : Window
 {
     private const double MinimumGlassHeight = 110;
-    private const double MaximumCornerRadius = 55;
 
     private readonly ILogger<LiquidShower> _logger = IAppHost.GetService<ILogger<LiquidShower>>();
     public LiquidGlassMaterial GlassMaterial { get; } =
@@ -36,13 +35,13 @@ public partial class LiquidShower : Window
 
     /// <summary>
     /// 根据内容实际高度调整玻璃容器尺寸，避免结果字号较大时被固定高度裁剪。
-    /// 圆角随高度收拢，最小保持 110 高度、最大 55 圆角。
+    /// 圆角取「外观设置中的界面圆角」并按高度收拢，最小保持 110 高度。
     /// </summary>
-    public void ApplyGlassExtent(double height)
+    public void ApplyGlassExtent(double height, double cornerRadius)
     {
         var safeHeight = Math.Max(MinimumGlassHeight, height);
         GlassContainer.Height = safeHeight;
-        GlassContainer.CornerRadius = Math.Min(MaximumCornerRadius, safeHeight / 2);
+        GlassContainer.CornerRadius = Math.Min(Math.Max(0, cornerRadius), safeHeight / 2);
     }
 
     protected override void OnClosed(EventArgs e)

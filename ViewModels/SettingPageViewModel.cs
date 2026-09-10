@@ -248,6 +248,75 @@ public class SettingPageViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _resultFontSizeDraft, value);
     }
 
+    // 界面圆角（草稿：编辑后点「保存修改」才生效）
+    private double _cornerRadiusDraft = AppearanceSetting.DefaultCornerRadius;
+    public double CornerRadiusDraft
+    {
+        get => _cornerRadiusDraft;
+        set => this.RaiseAndSetIfChanged(ref _cornerRadiusDraft, value);
+    }
+
+    // ===== 快捷键点名（草稿：点「保存快捷键」才生效）=====
+    private bool _hotkeyEnabledDraft;
+    public bool HotkeyEnabledDraft
+    {
+        get => _hotkeyEnabledDraft;
+        set => this.RaiseAndSetIfChanged(ref _hotkeyEnabledDraft, value);
+    }
+
+    private bool _hotkeyCtrlDraft;
+    public bool HotkeyCtrlDraft
+    {
+        get => _hotkeyCtrlDraft;
+        set => this.RaiseAndSetIfChanged(ref _hotkeyCtrlDraft, value);
+    }
+
+    private bool _hotkeyAltDraft;
+    public bool HotkeyAltDraft
+    {
+        get => _hotkeyAltDraft;
+        set => this.RaiseAndSetIfChanged(ref _hotkeyAltDraft, value);
+    }
+
+    private bool _hotkeyShiftDraft;
+    public bool HotkeyShiftDraft
+    {
+        get => _hotkeyShiftDraft;
+        set => this.RaiseAndSetIfChanged(ref _hotkeyShiftDraft, value);
+    }
+
+    private bool _hotkeyWinDraft;
+    public bool HotkeyWinDraft
+    {
+        get => _hotkeyWinDraft;
+        set => this.RaiseAndSetIfChanged(ref _hotkeyWinDraft, value);
+    }
+
+    private string _hotkeyKeyDraft = "C";
+    public string HotkeyKeyDraft
+    {
+        get => _hotkeyKeyDraft;
+        set => this.RaiseAndSetIfChanged(ref _hotkeyKeyDraft, value);
+    }
+
+    // 0 = 全局（任意前台窗口）；1 = 仅 ClassIsland 前台
+    private int _hotkeyScopeIndexDraft;
+    public int HotkeyScopeIndexDraft
+    {
+        get => _hotkeyScopeIndexDraft;
+        set => this.RaiseAndSetIfChanged(ref _hotkeyScopeIndexDraft, value);
+    }
+
+    private string _hotkeyStatusText = "未启用";
+    public string HotkeyStatusText
+    {
+        get => _hotkeyStatusText;
+        set => this.RaiseAndSetIfChanged(ref _hotkeyStatusText, value);
+    }
+
+    /// <summary>快捷键主键候选列表（字母 / 数字 / F1–F12 / 常用特殊键）。</summary>
+    public IReadOnlyList<string> HotkeyKeys => HotkeyKeyMap.SelectableKeys;
+
     /// <summary>系统字体名列表，供「字体」下拉框选择。</summary>
     public IReadOnlyList<string> FontFamilies { get; } = GetSystemFontFamilies();
 
@@ -390,6 +459,7 @@ public class SettingPageViewModel : ReactiveObject
         RMin = Settings.Instance.Algorithm.RMin;
         RMax = Settings.Instance.Algorithm.RMax;
         LoadAppearanceDraft();
+        LoadHotkeyDraft();
         IsViewPasswordEnabled = Settings.Instance.Security.IsViewPasswordEnabled;
         IsEditPasswordEnabled = Settings.Instance.Security.IsEditPasswordEnabled;
         IsViewUnlocked = !IsViewPasswordEnabled;
@@ -557,6 +627,7 @@ public class SettingPageViewModel : ReactiveObject
         ResultImagePathDraft = a.ResultImagePath;
         FontFamilyDraft = a.FontFamily;
         ResultFontSizeDraft = a.ResultFontSize;
+        CornerRadiusDraft = a.CornerRadius;
     }
 
     /// <summary>把外观草稿提交到设置并持久化（点「保存修改」时调用）。</summary>
@@ -571,7 +642,65 @@ public class SettingPageViewModel : ReactiveObject
         a.ResultImagePath = ResultImagePathDraft ?? string.Empty;
         a.FontFamily = FontFamilyDraft ?? string.Empty;
         a.ResultFontSize = ResultFontSizeDraft > 0 ? ResultFontSizeDraft : 60;
+        a.CornerRadius = CornerRadiusDraft < 0 ? 0 : CornerRadiusDraft;
     }
+
+    /// <summary>从已保存设置加载快捷键草稿。</summary>
+    private void LoadHotkeyDraft()
+    {
+        var h = Settings.Instance.Hotkey;
+        HotkeyEnabledDraft = h.Enabled;
+        HotkeyCtrlDraft = h.Modifiers.HasFlag(HotkeyModifiers.Control);
+        HotkeyAltDraft = h.Modifiers.HasFlag(HotkeyModifiers.Alt);
+        HotkeyShiftDraft = h.Modifiers.HasFlag(HotkeyModifiers.Shift);
+        HotkeyWinDraft = h.Modifiers.HasFlag(HotkeyModifiers.Windows);
+        HotkeyKeyDraft = string.IsNullOrEmpty(h.Key) ? "C" : h.Key;
+        HotkeyScopeIndexDraft = h.Scope == HotkeyScope.ClassIslandForeground ? 1 : 0;
+    }
+
+    /// <summary>校验快捷键草稿；不合法时返回 false 并给出原因。</summary>
+    public bool ValidateHotkeyDraft(out string error) =>
+        HotkeyText.Validate(BuildHotkeyModifiers(), HotkeyKeyDraft, out error);
+
+    /// <summary>
+    /// 把快捷键草稿提交到设置。注册表持久化由 SettingsBinder 自动完成；
+    /// Enabled 最后赋值，确保其它属性都已就绪后再触发注册。
+    /// </summary>
+    public void SaveHotkey()
+    {
+        var h = Settings.Instance.Hotkey;
+        h.Modifiers = BuildHotkeyModifiers();
+        h.Key = string.IsNullOrEmpty(HotkeyKeyDraft) ? "C" : HotkeyKeyDraft;
+        h.Scope = HotkeyScopeIndexDraft == 1 ? HotkeyScope.ClassIslandForeground : HotkeyScope.Global;
+        h.Enabled = HotkeyEnabledDraft;
+    }
+
+    private HotkeyModifiers BuildHotkeyModifiers()
+    {
+        var modifiers = HotkeyModifiers.None;
+        if (HotkeyCtrlDraft) modifiers |= HotkeyModifiers.Control;
+        if (HotkeyAltDraft) modifiers |= HotkeyModifiers.Alt;
+        if (HotkeyShiftDraft) modifiers |= HotkeyModifiers.Shift;
+        if (HotkeyWinDraft) modifiers |= HotkeyModifiers.Windows;
+        return modifiers;
+    }
+
+    /// <summary>把当前已保存的快捷键设置同步为界面提示文本。</summary>
+    public void RefreshHotkeyStatus(HotkeyRegistrationState state, string message)
+    {
+        var h = Settings.Instance.Hotkey;
+        HotkeyStatusText = state switch
+        {
+            HotkeyRegistrationState.Registered => $"{h.GestureText} 已生效（{DescribeScope(h.Scope)}）",
+            HotkeyRegistrationState.Conflict => $"{h.GestureText} 注册失败：{message}",
+            HotkeyRegistrationState.Invalid => $"设置无效：{message}",
+            HotkeyRegistrationState.Failed => $"{h.GestureText} 注册失败：{message}",
+            _ => "未启用"
+        };
+    }
+
+    private static string DescribeScope(HotkeyScope scope) =>
+        scope == HotkeyScope.ClassIslandForeground ? "仅 ClassIsland 前台" : "全局";
 
     private static Color? ParseColor(string? hex)
     {

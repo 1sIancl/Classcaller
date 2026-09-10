@@ -47,6 +47,13 @@ public abstract class HoverControlBase : UserControl
     protected abstract TextBlock CallTextBlock { get; }
     protected abstract InputElement DragSurface { get; }
 
+    /// <summary>当前外观设置中的界面圆角半径（像素，0 表示直角）。</summary>
+    protected static double ConfiguredCornerRadius => Settings.Instance.Appearance.CornerRadius;
+
+    /// <summary>把配置的圆角收敛到安全范围（不超过元素半高），避免圆角撑破控件。</summary>
+    protected static double ClampCornerRadius(double halfExtent)
+        => Math.Max(0, Math.Min(ConfiguredCornerRadius, halfExtent));
+
     protected HoverControlBase()
     {
         _islandCallerService = IAppHost.GetService<ClasscallerService>();
@@ -58,6 +65,7 @@ public abstract class HoverControlBase : UserControl
     {
         SecondaryButton.PropertyChanged += SecondaryButtonOnPropertyChanged;
         Settings.Instance.Hover.PropertyChanged += HoverSettingOnPropertyChanged;
+        Settings.Instance.Appearance.PropertyChanged += AppearanceSettingOnPropertyChanged;
         DetachedFromVisualTree += OnDetachedFromVisualTree;
         ApplyHoverLayout();
         DragSurface.AddHandler(InputElement.PointerPressedEvent, DragSurfaceOnPointerPressed, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, true);
@@ -71,8 +79,17 @@ public abstract class HoverControlBase : UserControl
     private void OnDetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
     {
         Settings.Instance.Hover.PropertyChanged -= HoverSettingOnPropertyChanged;
+        Settings.Instance.Appearance.PropertyChanged -= AppearanceSettingOnPropertyChanged;
         SecondaryButton.PropertyChanged -= SecondaryButtonOnPropertyChanged;
         DetachedFromVisualTree -= OnDetachedFromVisualTree;
+    }
+
+    private void AppearanceSettingOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(AppearanceSetting.CornerRadius))
+        {
+            Dispatcher.UIThread.Post(ApplyHoverLayout, DispatcherPriority.Render);
+        }
     }
 
     private void HoverSettingOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)

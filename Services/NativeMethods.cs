@@ -192,4 +192,64 @@ internal static class NativeMethods
         var result = SetWindowLongPtr(hWnd, GWL_EXSTYLE, new IntPtr(newStyle));
         return result.ToInt64();
     }
+
+    // ---- 全局快捷键（RegisterHotKey）----
+    /// <summary>热键消息：wParam 为注册时使用的热键 ID。</summary>
+    public const uint WM_HOTKEY = 0x0312;
+
+    /// <summary>线程退出消息。</summary>
+    public const uint WM_QUIT = 0x0012;
+
+    // RegisterHotKey 修饰键
+    public const uint MOD_ALT = 0x0001;
+    public const uint MOD_CONTROL = 0x0002;
+    public const uint MOD_SHIFT = 0x0004;
+    public const uint MOD_WIN = 0x0008;
+    /// <summary>按住不放时不重复投递 WM_HOTKEY（用于天然抑制长按连发）。</summary>
+    public const uint MOD_NOREPEAT = 0x4000;
+
+    /// <summary>RegisterHotKey 失败：该组合已被其它程序注册。</summary>
+    public const int ERROR_HOTKEY_ALREADY_REGISTERED = 1409;
+
+    /// <summary>PeekMessage 标志：仅查看、不移除消息（用于创建线程消息队列）。</summary>
+    public const uint PM_NOREMOVE = 0x0000;
+
+    /// <summary>Win32 消息结构（与 MSG 布局一致，x64 下 48 字节）。</summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MSG
+    {
+        public IntPtr hwnd;
+        public uint message;
+        public IntPtr wParam;
+        public IntPtr lParam;
+        public uint time;
+        public int ptX;
+        public int ptY;
+    }
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+    /// <summary>取当前线程 ID（用于向线程消息队列 PostThreadMessage）。</summary>
+    [DllImport("kernel32.dll")]
+    public static extern uint GetCurrentThreadId();
+
+    [DllImport("user32.dll", EntryPoint = "GetMessageW", SetLastError = true)]
+    public static extern int GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+    [DllImport("user32.dll", EntryPoint = "PeekMessageW")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool PeekMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
+
+    [DllImport("user32.dll", EntryPoint = "PostThreadMessageW", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool PostThreadMessage(uint idThread, uint msg, IntPtr wParam, IntPtr lParam);
+
+    [DllImport("user32.dll")]
+    public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 }

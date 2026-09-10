@@ -1,5 +1,7 @@
+using Avalonia.Threading;
 using ClassIsland.Core.Abstractions.Services;
 using ClassIsland.Core.Abstractions.Services.SpeechService;
+using ClassIsland.Core.Controls;
 using ClassIsland.Shared;
 using ClassIsland.Shared.Enums;
 using Classcaller.Models;
@@ -188,10 +190,58 @@ namespace Classcaller.Services.ClasscallerService
             return ProfileRuntimeService.EnsureLoaded(profileId);
         }
 
+        /// <summary>
+        /// 由全局快捷键触发一次随机点名。
+        /// 与悬浮窗「Call」按钮共用 <see cref="ShowRandomStudent"/>：同一名单档案、同一防重复均衡权重算法、
+        /// 同一展示渠道（通知 / 展示窗口）与 TTS 播报设置。
+        /// </summary>
+        public void TriggerRandomCallFromHotkey()
+        {
+            if (Status.IsPluginReady == false)
+            {
+                Logger?.LogWarning("快捷键触发忽略：插件尚未就绪。");
+                return;
+            }
+
+            // 重复触发保护：上一次展示仍在进行且用户未开启「允许打断」时，忽略本次触发，避免结果互相覆盖。
+            if (!Status.OccupationDisable && !Status.InterruptionEnable)
+            {
+                Logger?.LogInformation("快捷键触发忽略：上一次点名仍在展示且未开启打断。");
+                return;
+            }
+
+            Logger?.LogInformation("全局快捷键触发点名。");
+            ShowRandomStudent(1);
+        }
+
+        /// <summary>无可用内容（名单为空 / 无可点名成员）时的统一反馈。</summary>
+        private void ShowCannotCallFeedback()
+        {
+            const string header = "无法点名";
+            const string content = "当前名单为空或没有可点名的学生，请先在设置中导入或选择名单。";
+            void Show() => _ = CommonTaskDialogs.ShowDialog(header, content);
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                Show();
+            }
+            else
+            {
+                Dispatcher.UIThread.Post(Show);
+            }
+        }
+
         public async void ShowRandomStudent(int stunum)
         {
             // 准备点名
             if(Status.IsPluginReady == false) return;
+
+            // 无可用内容保护：名单为空时不再产出 "Error" 文本，而是给出明确反馈。
+            if (CoreService.PersonCount <= 0)
+            {
+                Logger?.LogWarning("点名请求被忽略：当前名单为空或没有可点名的学生。");
+                ShowCannotCallFeedback();
+                return;
+            }
 
             if (Status.InterruptionEnable && (Status.OccupationDisable == false))
             {

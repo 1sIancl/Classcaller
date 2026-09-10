@@ -332,10 +332,76 @@
                             </StackPanel>
                         </fa:FASettingsExpander.Footer>
                     </fa:FASettingsExpander>
+                    <fa:FASettingsExpander
+                    IconSource="{ci:FluentIconSource &#xE790;}"
+                    Header="界面圆角"
+                    Description="悬浮窗与结果窗口的圆角大小（0 为直角，数值受元素高度限制，过大不会超过元素半高）">
+                        <fa:FASettingsExpander.Footer>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Slider Minimum="0" Maximum="60" VerticalAlignment="Center" TickFrequency="1" Width="180"
+                                        IsSnapToTickEnabled="True" Value="{Binding CornerRadiusDraft, Mode=TwoWay}"/>
+                                <TextBlock Text="{Binding CornerRadiusDraft, StringFormat={}{0:F0}}"
+                                           FontWeight="Bold" FontSize="16" VerticalAlignment="Center" MinWidth="36"/>
+                            </StackPanel>
+                        </fa:FASettingsExpander.Footer>
+                    </fa:FASettingsExpander>
                     <Button HorizontalAlignment="Right" Margin="0,8,0,0" Classes="accent"
                             Click="SaveAppearanceButton_OnClick">
                         <ci:IconText Glyph="&#xE74E;" Text="保存修改"/>
                     </Button>
+
+                    <!-- ============ 快捷键点名 ============ -->
+                    <Separator Margin="0 12 0 4" />
+                    <ci:IconText Glyph="&#xE765;" Text="快捷键点名" Margin="0,0,0,4"/>
+                    <fa:FASettingsExpander
+                    IconSource="{ci:FluentIconSource &#xE765;}"
+                    Header="启用快捷键点名"
+                    Description="按下组合键即可触发一次随机点名；与悬浮窗「Call」按钮同源（同一名单、同一防重复均衡算法）">
+                        <fa:FASettingsExpander.Footer>
+                            <ToggleSwitch IsChecked="{Binding HotkeyEnabledDraft, Mode=TwoWay}"/>
+                        </fa:FASettingsExpander.Footer>
+                    </fa:FASettingsExpander>
+                    <fa:FASettingsExpander
+                    IconSource="{ci:FluentIconSource &#xE765;}"
+                    Header="修饰键"
+                    Description="至少选择一个修饰键；仅功能键（F1–F24）允许不带修饰键单独使用">
+                        <fa:FASettingsExpander.Footer>
+                            <StackPanel Orientation="Horizontal" Spacing="14">
+                                <CheckBox Content="Ctrl" IsChecked="{Binding HotkeyCtrlDraft, Mode=TwoWay}"/>
+                                <CheckBox Content="Alt" IsChecked="{Binding HotkeyAltDraft, Mode=TwoWay}"/>
+                                <CheckBox Content="Shift" IsChecked="{Binding HotkeyShiftDraft, Mode=TwoWay}"/>
+                                <CheckBox Content="Win" IsChecked="{Binding HotkeyWinDraft, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </fa:FASettingsExpander.Footer>
+                    </fa:FASettingsExpander>
+                    <fa:FASettingsExpander
+                    IconSource="{ci:FluentIconSource &#xE765;}"
+                    Header="主键"
+                    Description="快捷键中的主键：字母、数字、F1–F12 或常用特殊键">
+                        <fa:FASettingsExpander.Footer>
+                            <ComboBox ItemsSource="{Binding HotkeyKeys}"
+                                      SelectedItem="{Binding HotkeyKeyDraft, Mode=TwoWay}"
+                                      Width="180"/>
+                        </fa:FASettingsExpander.Footer>
+                    </fa:FASettingsExpander>
+                    <fa:FASettingsExpander
+                    IconSource="{ci:FluentIconSource &#xE765;}"
+                    Header="触发范围"
+                    Description="全局＝任意前台窗口均触发；仅 ClassIsland 前台＝仅在 ClassIsland 窗口活动时触发">
+                        <fa:FASettingsExpander.Footer>
+                            <ComboBox SelectedIndex="{Binding HotkeyScopeIndexDraft, Mode=TwoWay}" Width="220">
+                                <ComboBoxItem Content="全局（任意前台窗口）"/>
+                                <ComboBoxItem Content="仅 ClassIsland 前台"/>
+                            </ComboBox>
+                        </fa:FASettingsExpander.Footer>
+                    </fa:FASettingsExpander>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,8,0,0">
+                        <TextBlock Text="{Binding HotkeyStatusText}" VerticalAlignment="Center"
+                                   FontSize="13" Opacity="0.7"/>
+                        <Button Classes="accent" Click="SaveHotkeyButton_OnClick">
+                            <ci:IconText Glyph="&#xE74E;" Text="保存快捷键"/>
+                        </Button>
+                    </StackPanel>
 
                     <!-- ============ 高级设置（默认折叠） ============ -->
                     <Expander Margin="0 16 0 4">

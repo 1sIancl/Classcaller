@@ -27,6 +27,9 @@ namespace Classcaller.Services
         // 计算学生被点名的权重
         internal List<Person> Persons { get; set; } = new List<Person>();
 
+        /// <summary>当前名单中的可点名人数（0 表示无可用内容）。</summary>
+        internal int PersonCount => Persons.Count;
+
         internal void Initialize()
         {
             ProfileService = IAppHost.GetService<ProfileService>();

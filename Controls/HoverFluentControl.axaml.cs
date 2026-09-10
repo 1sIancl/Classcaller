@@ -34,16 +34,12 @@ public partial class HoverFluentControl : HoverControlBase
 
         CallTextBlock.IsVisible = isFullLayout;
         PrimaryButton.Width = isFullLayout ? 88 : 56;
-        if (isMiniLayout)
-        {
-            PrimaryButton.CornerRadius = new CornerRadius(28);
-        }
-        else
-        {
-            PrimaryButton.ClearValue(TemplatedControl.CornerRadiusProperty);
-        }
 
+        // 界面圆角：统一应用到悬浮窗按钮，收敛到按钮半高（56/2=28）以内。
+        var radius = new CornerRadius(ClampCornerRadius(28));
+        PrimaryButton.CornerRadius = radius;
         SecondaryButton.IsVisible = !isMiniLayout;
         SecondaryButton.Width = 56;
+        SecondaryButton.CornerRadius = radius;
     }
 }

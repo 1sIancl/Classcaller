@@ -40,6 +40,7 @@ namespace Classcaller
             services.AddSingleton<ScreenBrightnessHelper>();
             services.AddSingleton(Settings.Instance.Topmost);
             services.AddSingleton<TopmostEnhancerService>();
+            services.AddSingleton<HotkeyService>();
             services.AddSettingsPage<SettingPage>();
             BuildActionMenu();
             services.AddAction<DisableHoverAction>();
@@ -60,6 +61,8 @@ namespace Classcaller
                     IAppHost.GetService<ClasscallerService>().Initialize();
                     IAppHost.GetService<WindowsManager>().Initialize();
                     IAppHost.GetService<TopmostEnhancerService>().Start();
+                    // 设置加载完成后按配置注册全局快捷键（默认关闭，不会主动抢占组合键）。
+                    IAppHost.GetService<HotkeyService>().Apply();
                 }
                 catch (Exception ex)
                 {
@@ -73,6 +76,7 @@ namespace Classcaller
             AppBase.Current.AppStopping += (_, _) =>
             {
                 IAppHost.GetService<TopmostEnhancerService>().Dispose();
+                IAppHost.GetService<HotkeyService>().Dispose();
             };
         }
 

@@ -15,6 +15,7 @@ namespace Classcaller.Models
         public AlgorithmSetting Algorithm { get; set; } = new AlgorithmSetting();
         public AppearanceSetting Appearance { get; set; } = new AppearanceSetting();
         public TopmostSetting Topmost { get; set; } = new TopmostSetting();
+        public HotkeySetting Hotkey { get; set; } = new HotkeySetting();
     }
 
     public class GeneralSetting : INotifyPropertyChanged
@@ -388,7 +389,11 @@ namespace Classcaller.Models
             _fontFamily = "HarmonyOS Sans SC";
             _resultFontSize = 60;
             _resultBackground = string.Empty;
+            _cornerRadius = DefaultCornerRadius;
         }
+
+        /// <summary>界面圆角默认值（像素），与旧版按钮/玻璃容器半径接近，保证升级后观感不突变。</summary>
+        public const double DefaultCornerRadius = 28;
 
         private string _accentColor;
 
@@ -460,6 +465,26 @@ namespace Classcaller.Models
         {
             get => _resultBackground;
             set { if (_resultBackground != value) { _resultBackground = value; OnPropertyChanged(nameof(ResultBackground)); } }
+        }
+
+        private double _cornerRadius;
+
+        /// <summary>
+        /// 界面圆角半径（像素，0 表示直角）。作用于悬浮窗按钮、液态玻璃容器与结果窗口。
+        /// 实际生效值会被各元素自身高度限制（不超过元素半高），因此数值过大不会把圆角撑破。
+        /// </summary>
+        public double CornerRadius
+        {
+            get => _cornerRadius;
+            set
+            {
+                double cornerRadius = value < 0 ? 0 : value;
+                if (_cornerRadius != cornerRadius)
+                {
+                    _cornerRadius = cornerRadius;
+                    OnPropertyChanged(nameof(CornerRadius));
+                }
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
