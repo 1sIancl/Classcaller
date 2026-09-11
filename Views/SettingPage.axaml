@@ -7,9 +7,13 @@
              xmlns:ci2="clr-namespace:ClassIsland.Core.Abstractions.Controls;assembly=ClassIsland.Core"
              xmlns:vm="using:Classcaller.ViewModels"
              xmlns:ci3="http://classisland.tech/schemas/xaml/core"
+             xmlns:conv="using:Classcaller.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Classcaller.Views.SettingPage"
              x:DataType="vm:SettingPageViewModel">
+    <ci2:SettingsPageBase.Resources>
+        <conv:CallButtonWidthConverter x:Key="CallButtonWidthConverter"/>
+    </ci2:SettingsPageBase.Resources>
     <ci2:SettingsPageBase.DataContext>
         <vm:SettingPageViewModel />
     </ci2:SettingsPageBase.DataContext>
@@ -92,13 +96,38 @@
                     <fa:FASettingsExpander
                     IconSource="{ci:FluentIconSource &#xEFBD;}"
                     Header="悬浮窗布局"
-                    Description="选择完整、紧凑或 Mini 悬浮窗布局">
+                    Description="选择完整、紧凑、Mini 或简约悬浮窗布局">
                         <fa:FASettingsExpander.Footer>
                             <ComboBox SelectedIndex="{Binding HoverLayout, Mode=TwoWay}" Width="180">
                                 <ComboBoxItem Content="完整"/>
                                 <ComboBoxItem Content="紧凑"/>
                                 <ComboBoxItem Content="Mini"/>
+                                <ComboBoxItem Content="简约（隐藏多人抽选）"/>
                             </ComboBox>
+                        </fa:FASettingsExpander.Footer>
+                    </fa:FASettingsExpander>
+                    <fa:FASettingsExpander
+                    IconSource="{ci:FluentIconSource &#xEFBD;}"
+                    Header="布局方向"
+                    Description="横版为水平排列，竖版为垂直排列">
+                        <fa:FASettingsExpander.Footer>
+                            <ComboBox SelectedIndex="{Binding LayoutDirection, Mode=TwoWay}" Width="180">
+                                <ComboBoxItem Content="横版（水平排列）"/>
+                                <ComboBoxItem Content="竖版（垂直排列）"/>
+                            </ComboBox>
+                        </fa:FASettingsExpander.Footer>
+                    </fa:FASettingsExpander>
+                    <fa:FASettingsExpander
+                    IconSource="{ci:FluentIconSource &#xEFBD;}"
+                    Header="Call 按钮宽度"
+                    Description="悬浮窗主按钮宽度（像素），0 表示自动">
+                        <fa:FASettingsExpander.Footer>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Slider Minimum="0" Maximum="240" VerticalAlignment="Center" TickFrequency="1" Width="180"
+                                        IsSnapToTickEnabled="True" Value="{Binding CallButtonWidth, Mode=TwoWay}"/>
+                                <TextBlock Text="{Binding CallButtonWidth, Converter={StaticResource CallButtonWidthConverter}}"
+                                           FontWeight="Bold" FontSize="16" VerticalAlignment="Center" MinWidth="48"/>
+                            </StackPanel>
                         </fa:FASettingsExpander.Footer>
                     </fa:FASettingsExpander>
                     <fa:FASettingsExpander

@@ -48,14 +48,12 @@ namespace Classcaller.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref _hoverImagePath, value);
                 this.RaisePropertyChanged(nameof(HasHoverImage));
-                this.RaisePropertyChanged(nameof(ShowHoverText));
                 LoadHoverImage();
             }
         }
 
+        /// <summary>是否已选择抽选时图片（有图片时用图片代替默认图标，文字照常显示）。</summary>
         public bool HasHoverImage => !string.IsNullOrWhiteSpace(_hoverImagePath);
-
-        public bool ShowHoverText => !HasHoverImage;
 
         private IImage? _hoverImageSource;
         public IImage? HoverImageSource

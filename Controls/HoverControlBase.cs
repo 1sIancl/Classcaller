@@ -54,6 +54,13 @@ public abstract class HoverControlBase : UserControl
     protected static double ClampCornerRadius(double halfExtent)
         => Math.Max(0, Math.Min(ConfiguredCornerRadius, halfExtent));
 
+    /// <summary>
+    /// Call 按钮（主按钮）宽度：读取设置值；配置为 0 或负数时表示自动，返回 double.NaN。
+    /// 完整（0）与简约（3）布局下生效，紧凑/迷你固定为 56。
+    /// </summary>
+    protected static double ConfiguredCallButtonWidth()
+        => Settings.Instance.Hover.CallButtonWidth <= 0 ? double.NaN : Settings.Instance.Hover.CallButtonWidth;
+
     /// <summary>「悬停保持原色」的样式类名（见各主题控件 XAML 中的 Style）。</summary>
     private const string KeepHoverColorClass = "keep-hover-color";
 
@@ -132,7 +139,7 @@ public abstract class HoverControlBase : UserControl
         DragSurface.AddHandler(InputElement.PointerCaptureLostEvent, DragPointerCaptureLost, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, true);
     }
 
-    protected abstract void ApplyThemeLayout(int hoverLayout);
+    protected abstract void ApplyThemeLayout(int hoverLayout, int layoutDirection);
 
     private void OnDetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
     {
@@ -158,7 +165,8 @@ public abstract class HoverControlBase : UserControl
     {
         if (e.PropertyName is nameof(AppearanceSetting.CornerRadius)
             or nameof(AppearanceSetting.KeepHoverColor)
-            or nameof(AppearanceSetting.AccentColor))
+            or nameof(AppearanceSetting.AccentColor)
+            or nameof(AppearanceSetting.HoverImagePath))
         {
             Dispatcher.UIThread.Post(ApplyHoverLayout, DispatcherPriority.Render);
         }
@@ -167,6 +175,8 @@ public abstract class HoverControlBase : UserControl
     private void HoverSettingOnPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName is nameof(HoverSetting.HoverLayout)
+            or nameof(HoverSetting.LayoutDirection)
+            or nameof(HoverSetting.CallButtonWidth)
             or nameof(HoverSetting.ScalingFactor))
         {
             Dispatcher.UIThread.Post(ApplyHoverLayout, DispatcherPriority.Render);
@@ -175,7 +185,7 @@ public abstract class HoverControlBase : UserControl
 
     private void ApplyHoverLayout()
     {
-        ApplyThemeLayout(Settings.Instance.Hover.HoverLayout);
+        ApplyThemeLayout(Settings.Instance.Hover.HoverLayout, Settings.Instance.Hover.LayoutDirection);
         // 布局/主题切换后主按钮可能变化（如液态玻璃迷你布局），需要重新钉住悬停颜色。
         ApplyKeepHoverColor();
         if (TopLevel.GetTopLevel(this) is IHoverWindow hoverWindow)

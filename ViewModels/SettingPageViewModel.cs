@@ -46,7 +46,21 @@ public class SettingPageViewModel : ReactiveObject
     public int HoverLayout
     {
         get => _hoverLayout;
-        set => this.RaiseAndSetIfChanged(ref _hoverLayout, Math.Clamp(value, 0, 2));
+        set => this.RaiseAndSetIfChanged(ref _hoverLayout, Math.Clamp(value, 0, 3));
+    }
+
+    private int _layoutDirection;
+    public int LayoutDirection
+    {
+        get => _layoutDirection;
+        set => this.RaiseAndSetIfChanged(ref _layoutDirection, Math.Clamp(value, 0, 1));
+    }
+
+    private double _callButtonWidth;
+    public double CallButtonWidth
+    {
+        get => _callButtonWidth;
+        set => this.RaiseAndSetIfChanged(ref _callButtonWidth, Math.Clamp(value, 0, 400));
     }
 
     private int _hoverTheme;
@@ -451,6 +465,8 @@ public class SettingPageViewModel : ReactiveObject
         IsHoverEnable = Settings.Instance.Hover.IsEnable;
         HoverScalingFactor = Settings.Instance.Hover.ScalingFactor;
         HoverLayout = Settings.Instance.Hover.HoverLayout;
+        LayoutDirection = Settings.Instance.Hover.LayoutDirection;
+        CallButtonWidth = Settings.Instance.Hover.CallButtonWidth;
         HoverTheme = Settings.Instance.Hover.HoverTheme;
         NotifyMethod = Settings.Instance.Call.NotifyMethod;
         ShowerTheme = Settings.Instance.Call.ShowerTheme;
@@ -495,6 +511,14 @@ public class SettingPageViewModel : ReactiveObject
             else if (args.PropertyName == nameof(HoverLayout))
             {
                 Settings.Instance.Hover.HoverLayout = HoverLayout;
+            }
+            else if (args.PropertyName == nameof(LayoutDirection))
+            {
+                Settings.Instance.Hover.LayoutDirection = LayoutDirection;
+            }
+            else if (args.PropertyName == nameof(CallButtonWidth))
+            {
+                Settings.Instance.Hover.CallButtonWidth = CallButtonWidth;
             }
             else if (args.PropertyName == nameof(HoverTheme))
             {

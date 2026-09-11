@@ -9,7 +9,6 @@ using Classcaller.Helpers;
 using Classcaller.Services.NotificationProvidersNew;
 using Classcaller.Views;
 using Microsoft.Extensions.Logging;
-using OmniTTS.Shared;
 
 namespace Classcaller.Services.ClasscallerService
 {
@@ -25,7 +24,9 @@ namespace Classcaller.Services.ClasscallerService
         private HistoryService HistoryService { get; set; }
         private ProfileService ProfileService { get; set; }
         private ProfileRuntimeService ProfileRuntimeService { get; set; }
-        private IOmniTTS? OmniTTS { get; set; }
+        // 故意用 object 而非 IOmniTTS：避免 ClasscallerService 的其它方法在 JIT 时
+        // 被迫加载可选的 OmniTTS.Shared 程序集（该程序集可能被系统策略拦截）。
+        private object? OmniTTS { get; set; }
         private ISpeechService? ClassIslandTTS { get; set; }
         private WindowsManager WindowsManager { get; set; }
         private ClasscallerNotificationProviderNew? NotificationProvider { get; set; }
@@ -51,15 +52,20 @@ namespace Classcaller.Services.ClasscallerService
             ClassIslandProfileService = IAppHost.TryGetService<IProfileService>();
             UriNavigationService = IAppHost.TryGetService<IUriNavigationService>();
             ClassIslandTTS = IAppHost.TryGetService<ISpeechService>();
-            OmniTTS = IAppHost.TryGetService<IOmniTTS>();
 
             Status.ClasscallerServiceInitialized = false;
             Status.IsTimeStatusAvailable = !(Settings.Instance.General.BreakDisable & (LessonsService?.CurrentState ?? TimeState.OnClass) == TimeState.Breaking);
             Status.InterruptionEnable = Settings.Instance.General.Interruptable;
 
             // 检查设置项是否有效
-            if (Settings.Instance.TTS.Provider == Classcaller.TtsProvider.OmniTTS && !CheckDependences.CheckOmniTTS()) Settings.Instance.TTS.Provider = Classcaller.TtsProvider.None;
-            OmniTTS = IAppHost.TryGetService<IOmniTTS>();
+            // OmniTTS 是可选依赖：用安全桥接获取，未安装 / 文件缺失 / 被系统安全策略
+            // （如 Windows 11「智能应用控制」）拦截时降级处理，而不是让插件初始化直接崩溃。
+            OmniTTS = OmniTtsBridge.TryResolve();
+            if (Settings.Instance.TTS.Provider == Classcaller.TtsProvider.OmniTTS && OmniTTS is null)
+            {
+                Settings.Instance.TTS.Provider = Classcaller.TtsProvider.None;
+                Logger?.LogWarning("OmniTTS 不可用（未安装或依赖被系统安全策略拦截），TTS 提供方已自动回退为「无」。");
+            }
 
             if (Settings.Instance.Profile.IsPreferProfile)
             {
@@ -271,7 +277,11 @@ namespace Classcaller.Services.ClasscallerService
             // 发送结果
             Cts = new CancellationTokenSource();
             var thisCts = Cts;
-            if (Settings.Instance.TTS.Provider == Classcaller.TtsProvider.OmniTTS) OmniTTS?.PlayAudio(speechContent, Cts.Token);
+            if (Settings.Instance.TTS.Provider == Classcaller.TtsProvider.OmniTTS
+                && !OmniTtsBridge.TryPlay(OmniTTS, speechContent, Cts.Token))
+            {
+                Logger?.LogWarning("OmniTTS 播报不可用，本次已跳过语音播报。");
+            }
             else if (Settings.Instance.TTS.Provider == Classcaller.TtsProvider.ClassIsland) ClassIslandTTS?.EnqueueSpeechQueue(speechContent);
             if ((Settings.Instance.Call.NotifyMethod & 0b01) != 0)
             {

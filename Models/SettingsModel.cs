@@ -192,6 +192,8 @@ namespace Classcaller.Models
             _scalingFactor = 1.0;
             _hoverLayout = 0;
             _hoverTheme = 0;
+            _layoutDirection = 0;
+            _callButtonWidth = 88;
         }
 
         private bool _isEnable;
@@ -215,11 +217,48 @@ namespace Classcaller.Models
             get => _hoverLayout;
             set
             {
-                int hoverLayout = Math.Clamp(value, 0, 2);
+                int hoverLayout = Math.Clamp(value, 0, 3);
                 if (_hoverLayout != hoverLayout)
                 {
                     _hoverLayout = hoverLayout;
                     OnPropertyChanged(nameof(HoverLayout));
+                }
+            }
+        }
+
+        private int _layoutDirection;
+
+        /// <summary>悬浮窗布局方向：0=横版（水平排列），1=竖版（垂直排列）。</summary>
+        public int LayoutDirection
+        {
+            get => _layoutDirection;
+            set
+            {
+                int layoutDirection = Math.Clamp(value, 0, 1);
+                if (_layoutDirection != layoutDirection)
+                {
+                    _layoutDirection = layoutDirection;
+                    OnPropertyChanged(nameof(LayoutDirection));
+                }
+            }
+        }
+
+        private double _callButtonWidth;
+
+        /// <summary>
+        /// 悬浮窗主按钮（Call 按钮）宽度（像素）。0 表示自动（代码内用 double.NaN）。
+        /// 仅在完整（0）与简约（3）布局下生效，紧凑（1）/迷你（2）固定为 56。
+        /// </summary>
+        public double CallButtonWidth
+        {
+            get => _callButtonWidth;
+            set
+            {
+                double callButtonWidth = Math.Clamp(value, 0, 400);
+                if (_callButtonWidth != callButtonWidth)
+                {
+                    _callButtonWidth = callButtonWidth;
+                    OnPropertyChanged(nameof(CallButtonWidth));
                 }
             }
         }

@@ -62,6 +62,8 @@ namespace Classcaller.Models
             IsC_HoverKey?.SetValue("IsEnable", Instance.Hover.IsEnable);
             IsC_HoverKey?.SetValue("ScalingFactor", Instance.Hover.ScalingFactor);
             IsC_HoverKey?.SetValue("HoverLayout", Instance.Hover.HoverLayout);
+            IsC_HoverKey?.SetValue("LayoutDirection", Instance.Hover.LayoutDirection);
+            IsC_HoverKey?.SetValue("CallButtonWidth", Instance.Hover.CallButtonWidth);
             IsC_HoverKey?.SetValue("HoverTheme", Instance.Hover.HoverTheme);
             IsC_HoverKey_Position?.SetValue("X", Instance.Hover.Position.X);
             IsC_HoverKey_Position?.SetValue("Y", Instance.Hover.Position.Y);
@@ -161,6 +163,8 @@ namespace Classcaller.Models
                 Instance.Hover.IsEnable = Convert.ToBoolean(IsC_HoverKey?.GetValue("IsEnable") ?? true);
                 Instance.Hover.ScalingFactor = Convert.ToDouble(IsC_HoverKey?.GetValue("ScalingFactor") ?? 1.0);
                 Instance.Hover.HoverLayout = Convert.ToInt32(IsC_HoverKey?.GetValue("HoverLayout") ?? 0);
+                Instance.Hover.LayoutDirection = Convert.ToInt32(IsC_HoverKey?.GetValue("LayoutDirection") ?? 0);
+                Instance.Hover.CallButtonWidth = Convert.ToDouble(IsC_HoverKey?.GetValue("CallButtonWidth") ?? 88.0);
                 Instance.Hover.HoverTheme = Convert.ToInt32(IsC_HoverKey?.GetValue("HoverTheme") ?? 0);
                 Instance.Hover.Position.X = Convert.ToDouble(IsC_HoverKey_Position?.GetValue("X") ?? 200.0);
                 Instance.Hover.Position.Y = Convert.ToDouble(IsC_HoverKey_Position?.GetValue("Y") ?? 200.0);
@@ -243,6 +247,8 @@ namespace Classcaller.Models
             IsC_HoverKey?.SetValue("IsEnable", Instance.Hover.IsEnable);
             IsC_HoverKey?.SetValue("ScalingFactor", Instance.Hover.ScalingFactor);
             IsC_HoverKey?.SetValue("HoverLayout", Instance.Hover.HoverLayout);
+            IsC_HoverKey?.SetValue("LayoutDirection", Instance.Hover.LayoutDirection);
+            IsC_HoverKey?.SetValue("CallButtonWidth", Instance.Hover.CallButtonWidth);
             IsC_HoverKey?.SetValue("HoverTheme", Instance.Hover.HoverTheme);
             IsC_HoverKey_Position?.SetValue("X", Instance.Hover.Position.X);
             IsC_HoverKey_Position?.SetValue("Y", Instance.Hover.Position.Y);
