@@ -63,6 +63,14 @@ public class SettingPageViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _callButtonWidth, Math.Clamp(value, 0, 400));
     }
 
+    // 拖动结束后自动吸附屏幕边缘
+    private bool _snapToScreenEdge;
+    public bool SnapToScreenEdge
+    {
+        get => _snapToScreenEdge;
+        set => this.RaiseAndSetIfChanged(ref _snapToScreenEdge, value);
+    }
+
     private int _hoverTheme;
     public int HoverTheme
     {
@@ -120,6 +128,14 @@ public class SettingPageViewModel : ReactiveObject
     {
         get => _additionalTime;
         set => this.RaiseAndSetIfChanged(ref _additionalTime, value);
+    }
+
+    // 「自定义抽取」窗口的最大抽取人数（1–10）
+    private int _maxDrawCount = 5;
+    public int MaxDrawCount
+    {
+        get => _maxDrawCount;
+        set => this.RaiseAndSetIfChanged(ref _maxDrawCount, Math.Clamp(value, 1, 10));
     }
 
     // TTS 设置
@@ -467,11 +483,13 @@ public class SettingPageViewModel : ReactiveObject
         HoverLayout = Settings.Instance.Hover.HoverLayout;
         LayoutDirection = Settings.Instance.Hover.LayoutDirection;
         CallButtonWidth = Settings.Instance.Hover.CallButtonWidth;
+        SnapToScreenEdge = Settings.Instance.Hover.SnapToScreenEdge;
         HoverTheme = Settings.Instance.Hover.HoverTheme;
         NotifyMethod = Settings.Instance.Call.NotifyMethod;
         ShowerTheme = Settings.Instance.Call.ShowerTheme;
         BaseTime = Settings.Instance.Call.BaseTime;
         AdditionalTime = Settings.Instance.Call.AdditionalTime;
+        MaxDrawCount = Settings.Instance.Call.MaxDrawCount;
         Provider = Settings.Instance.TTS.Provider;
         BeforeText = Settings.Instance.TTS.BeforeText;
         AfterText = Settings.Instance.TTS.AfterText;
@@ -520,6 +538,10 @@ public class SettingPageViewModel : ReactiveObject
             {
                 Settings.Instance.Hover.CallButtonWidth = CallButtonWidth;
             }
+            else if (args.PropertyName == nameof(SnapToScreenEdge))
+            {
+                Settings.Instance.Hover.SnapToScreenEdge = SnapToScreenEdge;
+            }
             else if (args.PropertyName == nameof(HoverTheme))
             {
                 Settings.Instance.Hover.HoverTheme = HoverTheme;
@@ -539,6 +561,10 @@ public class SettingPageViewModel : ReactiveObject
             else if (args.PropertyName == nameof(AdditionalTime))
             {
                 Settings.Instance.Call.AdditionalTime = AdditionalTime;
+            }
+            else if (args.PropertyName == nameof(MaxDrawCount))
+            {
+                Settings.Instance.Call.MaxDrawCount = MaxDrawCount;
             }
             else if (args.PropertyName == nameof(BeforeText))
             {

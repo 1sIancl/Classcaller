@@ -9,7 +9,7 @@ description: ClassIsland 随机点名插件：公平抽选（防重复 + 历史�
 entranceAssembly: "Classcaller.dll"
 url: https://github.com/1sIancl/Classcaller
 author: 1sIancl
-version: 1.2.4.0
+version: 1.2.5.0
 apiVersion: 2.1.1.1
 icon: icon.png
 supportedOSPlatforms:

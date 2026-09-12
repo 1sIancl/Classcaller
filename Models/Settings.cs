@@ -64,6 +64,7 @@ namespace Classcaller.Models
             IsC_HoverKey?.SetValue("HoverLayout", Instance.Hover.HoverLayout);
             IsC_HoverKey?.SetValue("LayoutDirection", Instance.Hover.LayoutDirection);
             IsC_HoverKey?.SetValue("CallButtonWidth", Instance.Hover.CallButtonWidth);
+            IsC_HoverKey?.SetValue("SnapToScreenEdge", Instance.Hover.SnapToScreenEdge);
             IsC_HoverKey?.SetValue("HoverTheme", Instance.Hover.HoverTheme);
             IsC_HoverKey_Position?.SetValue("X", Instance.Hover.Position.X);
             IsC_HoverKey_Position?.SetValue("Y", Instance.Hover.Position.Y);
@@ -74,6 +75,7 @@ namespace Classcaller.Models
             IsC_CallKey?.SetValue("ShowerTheme", Instance.Call.ShowerTheme);
             IsC_CallKey?.SetValue("BaseTime", Instance.Call.BaseTime);
             IsC_CallKey?.SetValue("AdditionalTime", Instance.Call.AdditionalTime);
+            IsC_CallKey?.SetValue("MaxDrawCount", Instance.Call.MaxDrawCount);
             IsC_SecurityKey?.SetValue("ViewPasswordHash", Instance.Security.ViewPasswordHash);
             IsC_SecurityKey?.SetValue("IsViewPasswordEnabled", Instance.Security.IsViewPasswordEnabled);
             IsC_SecurityKey?.SetValue("EditPasswordHash", Instance.Security.EditPasswordHash);
@@ -165,6 +167,7 @@ namespace Classcaller.Models
                 Instance.Hover.HoverLayout = Convert.ToInt32(IsC_HoverKey?.GetValue("HoverLayout") ?? 0);
                 Instance.Hover.LayoutDirection = Convert.ToInt32(IsC_HoverKey?.GetValue("LayoutDirection") ?? 0);
                 Instance.Hover.CallButtonWidth = Convert.ToDouble(IsC_HoverKey?.GetValue("CallButtonWidth") ?? 88.0);
+                Instance.Hover.SnapToScreenEdge = Convert.ToBoolean(IsC_HoverKey?.GetValue("SnapToScreenEdge") ?? false);
                 Instance.Hover.HoverTheme = Convert.ToInt32(IsC_HoverKey?.GetValue("HoverTheme") ?? 0);
                 Instance.Hover.Position.X = Convert.ToDouble(IsC_HoverKey_Position?.GetValue("X") ?? 200.0);
                 Instance.Hover.Position.Y = Convert.ToDouble(IsC_HoverKey_Position?.GetValue("Y") ?? 200.0);
@@ -175,6 +178,7 @@ namespace Classcaller.Models
                 Instance.Call.ShowerTheme = Convert.ToInt32(IsC_CallKey?.GetValue("ShowerTheme") ?? 0);
                 Instance.Call.BaseTime = Convert.ToSingle(IsC_CallKey?.GetValue("BaseTime") ?? 1.0f);
                 Instance.Call.AdditionalTime = Convert.ToSingle(IsC_CallKey?.GetValue("AdditionalTime") ?? 2.0f);
+                Instance.Call.MaxDrawCount = Convert.ToInt32(IsC_CallKey?.GetValue("MaxDrawCount") ?? 5);
                 // 兼容旧键名 PasswordHash/IsEnabled：迁移到「查看密码」
                 var legacyViewPasswordHash = IsC_SecurityKey?.GetValue("PasswordHash") as string;
                 var legacyViewPasswordEnabled = IsC_SecurityKey?.GetValue("IsEnabled");
@@ -249,6 +253,7 @@ namespace Classcaller.Models
             IsC_HoverKey?.SetValue("HoverLayout", Instance.Hover.HoverLayout);
             IsC_HoverKey?.SetValue("LayoutDirection", Instance.Hover.LayoutDirection);
             IsC_HoverKey?.SetValue("CallButtonWidth", Instance.Hover.CallButtonWidth);
+            IsC_HoverKey?.SetValue("SnapToScreenEdge", Instance.Hover.SnapToScreenEdge);
             IsC_HoverKey?.SetValue("HoverTheme", Instance.Hover.HoverTheme);
             IsC_HoverKey_Position?.SetValue("X", Instance.Hover.Position.X);
             IsC_HoverKey_Position?.SetValue("Y", Instance.Hover.Position.Y);
@@ -259,6 +264,7 @@ namespace Classcaller.Models
             IsC_CallKey?.SetValue("ShowerTheme", Instance.Call.ShowerTheme);
             IsC_CallKey?.SetValue("BaseTime", Instance.Call.BaseTime);
             IsC_CallKey?.SetValue("AdditionalTime", Instance.Call.AdditionalTime);
+            IsC_CallKey?.SetValue("MaxDrawCount", Instance.Call.MaxDrawCount);
             IsC_SecurityKey?.SetValue("ViewPasswordHash", Instance.Security.ViewPasswordHash);
             IsC_SecurityKey?.SetValue("IsViewPasswordEnabled", Instance.Security.IsViewPasswordEnabled);
             IsC_SecurityKey?.SetValue("EditPasswordHash", Instance.Security.EditPasswordHash);

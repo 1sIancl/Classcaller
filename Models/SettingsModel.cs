@@ -179,6 +179,23 @@ namespace Classcaller.Models
             set { if (_additionalTime != value) { _additionalTime = value; OnPropertyChanged(nameof(AdditionalTime)); } }
         }
 
+        private int _maxDrawCount = 5;
+
+        /// <summary>「自定义抽取」窗口允许的最大抽取人数（1–10）。</summary>
+        public int MaxDrawCount
+        {
+            get => _maxDrawCount;
+            set
+            {
+                int maxDrawCount = Math.Clamp(value, 1, 10);
+                if (_maxDrawCount != maxDrawCount)
+                {
+                    _maxDrawCount = maxDrawCount;
+                    OnPropertyChanged(nameof(MaxDrawCount));
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
@@ -259,6 +276,22 @@ namespace Classcaller.Models
                 {
                     _callButtonWidth = callButtonWidth;
                     OnPropertyChanged(nameof(CallButtonWidth));
+                }
+            }
+        }
+
+        private bool _snapToScreenEdge;
+
+        /// <summary>拖动结束后，若悬浮窗贴近屏幕边缘则自动吸附贴边。</summary>
+        public bool SnapToScreenEdge
+        {
+            get => _snapToScreenEdge;
+            set
+            {
+                if (_snapToScreenEdge != value)
+                {
+                    _snapToScreenEdge = value;
+                    OnPropertyChanged(nameof(SnapToScreenEdge));
                 }
             }
         }

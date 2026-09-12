@@ -1,7 +1,9 @@
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using ClassIsland.Shared;
 using Classcaller.Helpers;
+using Classcaller.Models;
 using Classcaller.Services.ClasscallerService;
 using System.ComponentModel;
 
@@ -10,6 +12,10 @@ namespace Classcaller.Views;
 public partial class PersonalCall : Window,INotifyPropertyChanged
 {
     public double Num { get; set; }
+
+    /// <summary>允许的最大抽取人数（1–10），取自「最大抽取人数」设置。</summary>
+    public double MaxCount { get; }
+
     private ClasscallerService ClasscallerService { get; }
     private const int OwnerGapPx = 12;
     private const int OutsideClickMonitorStartDelayMs = 200;
@@ -21,8 +27,13 @@ public partial class PersonalCall : Window,INotifyPropertyChanged
     private bool _positionInitializedBeforeShow;
     public PersonalCall()
     {
-        ClasscallerService = IAppHost.GetService<ClasscallerService>();   
+        ClasscallerService = IAppHost.GetService<ClasscallerService>();
+        MaxCount = Math.Clamp(Settings.Instance.Call.MaxDrawCount, 1, 10);
+        Num = 1;
         InitializeComponent();
+        // 滑块刻度跟随设置的最大人数（1..MaxCount）
+        CountSlider.Ticks = new AvaloniaList<double>(
+            Enumerable.Range(1, (int)MaxCount).Select(i => (double)i));
         DataContext = this;
     }
 

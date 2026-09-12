@@ -131,6 +131,14 @@
                         </fa:FASettingsExpander.Footer>
                     </fa:FASettingsExpander>
                     <fa:FASettingsExpander
+                    IconSource="{ci:FluentIconSource &#xEFBD;}"
+                    Header="自动吸附屏幕边缘"
+                    Description="开启后，拖动悬浮窗靠近屏幕边缘时会自动贴边对齐">
+                        <fa:FASettingsExpander.Footer>
+                            <ToggleSwitch IsChecked="{Binding SnapToScreenEdge, Mode=TwoWay}"/>
+                        </fa:FASettingsExpander.Footer>
+                    </fa:FASettingsExpander>
+                    <fa:FASettingsExpander
                     IconSource="{ci:FluentIconSource &#xE7C3;}"
                     Header="悬浮窗主题"
                     Description="选择悬浮窗的 Fluent 或 LiquidGlass 外观。悬浮窗优先：启用液态玻璃后，点名展示窗口会自动回退到 Fluent">
@@ -254,6 +262,19 @@
                                 </StackPanel>
                             </fa:FASettingsExpanderItem.Footer>
                         </fa:FASettingsExpanderItem>
+                    </fa:FASettingsExpander>
+                    <fa:FASettingsExpander
+                    IconSource="{ci:FluentIconSource &#xECB8;}"
+                    Header="最大抽取人数"
+                    Description="「自定义抽取」窗口里最多能选几个人（1–10）">
+                        <fa:FASettingsExpander.Footer>
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                <Slider Minimum="1" Maximum="10" VerticalAlignment="Center" TickFrequency="1" Width="180"
+                                        IsSnapToTickEnabled="True" Value="{Binding MaxDrawCount, Mode=TwoWay}"/>
+                                <TextBlock Text="{Binding MaxDrawCount}" FontWeight="Bold" FontSize="16"
+                                           VerticalAlignment="Center" MinWidth="28"/>
+                            </StackPanel>
+                        </fa:FASettingsExpander.Footer>
                     </fa:FASettingsExpander>
 
                     <Separator Margin="0 12 0 4" />
